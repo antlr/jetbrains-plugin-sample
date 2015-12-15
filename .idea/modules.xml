@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/sample-jetbrains-plugin.iml" filepath="$PROJECT_DIR$/sample-jetbrains-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jetbrains-plugin-sample.iml" filepath="$PROJECT_DIR$/jetbrains-plugin-sample.iml" />
     </modules>
   </component>
 </project>
