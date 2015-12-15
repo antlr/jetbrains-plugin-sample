@@ -45,5 +45,7 @@
 
     <lang.psiStructureViewFactory language="Sample"
               implementationClass="org.antlr.jetbrains.sample.structview.SampleStructureViewFactory"/>
+
+    <colorSettingsPage implementation="org.antlr.jetbrains.sample.SampleColorSettingsPage"/>
   </extensions>
 </idea-plugin>

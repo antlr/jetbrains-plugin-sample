@@ -11,6 +11,7 @@ import org.antlr.jetbrains.adaptor.lexer.TokenIElementType;
 import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.parser.SampleLanguageParser;
 import org.jetbrains.annotations.NotNull;
+import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 /** A highlighter is really just a mapping from token type to
  *  some text attributes using {@link #getTokenHighlights(IElementType)}.
@@ -34,6 +35,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SampleSyntaxHighlighter extends SyntaxHighlighterBase {
 	private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
+	public static final TextAttributesKey ID =
+		createTextAttributesKey("SAMPLE_ID", DefaultLanguageHighlighterColors.IDENTIFIER);
+	public static final TextAttributesKey KEYWORD =
+		createTextAttributesKey("SAMPLE_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
+	public static final TextAttributesKey STRING =
+		createTextAttributesKey("SAMPLE_STRING", DefaultLanguageHighlighterColors.STRING);
+	public static final TextAttributesKey LINE_COMMENT =
+		createTextAttributesKey("SAMPLE_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
+	public static final TextAttributesKey BLOCK_COMMENT =
+		createTextAttributesKey("SAMPLE_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
 
 	static {
 		PSIElementTypeFactory.defineLanguageIElementTypes(SampleLanguage.INSTANCE,
@@ -51,12 +62,13 @@ public class SampleSyntaxHighlighter extends SyntaxHighlighterBase {
 	@NotNull
 	@Override
 	public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+		if ( !(tokenType instanceof TokenIElementType) ) return EMPTY_KEYS;
 		TokenIElementType myType = (TokenIElementType)tokenType;
 		int ttype = myType.getANTLRTokenType();
 		TextAttributesKey attrKey;
 		switch ( ttype ) {
 			case SampleLanguageLexer.ID :
-				attrKey = DefaultLanguageHighlighterColors.IDENTIFIER;
+				attrKey = ID;
 				break;
 			case SampleLanguageLexer.VAR :
 			case SampleLanguageLexer.WHILE :
@@ -71,16 +83,16 @@ public class SampleSyntaxHighlighter extends SyntaxHighlighterBase {
 			case SampleLanguageLexer.TYPEBOOLEAN :
 			case SampleLanguageLexer.TRUE :
 			case SampleLanguageLexer.FALSE :
-				attrKey = DefaultLanguageHighlighterColors.KEYWORD;
+				attrKey = KEYWORD;
 				break;
 			case SampleLanguageLexer.STRING :
-				attrKey = DefaultLanguageHighlighterColors.STRING;
+				attrKey = STRING;
 				break;
 			case SampleLanguageLexer.COMMENT :
-				attrKey = DefaultLanguageHighlighterColors.LINE_COMMENT;
+				attrKey = LINE_COMMENT;
 				break;
 			case SampleLanguageLexer.LINE_COMMENT :
-				attrKey = DefaultLanguageHighlighterColors.BLOCK_COMMENT;
+				attrKey = BLOCK_COMMENT;
 				break;
 			default :
 				return EMPTY_KEYS;
