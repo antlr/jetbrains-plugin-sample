@@ -47,5 +47,7 @@
               implementationClass="org.antlr.jetbrains.sample.structview.SampleStructureViewFactory"/>
 
     <colorSettingsPage implementation="org.antlr.jetbrains.sample.SampleColorSettingsPage"/>
+
+    <externalAnnotator language="Sample" implementationClass="org.antlr.jetbrains.sample.SampleExternalAnnotator"/>
   </extensions>
 </idea-plugin>
