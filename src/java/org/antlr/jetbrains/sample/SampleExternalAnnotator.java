@@ -19,7 +19,6 @@ public class SampleExternalAnnotator extends ExternalAnnotator<PsiFile, List<Sam
     // NOTE: can't use instance vars as only 1 instance
 
 	public static class Issue {
-		String annotation;
 		String msg;
 		PsiElement offendingNode;
 		public Issue(String msg, PsiElement node) { this.msg = msg; offendingNode = node; }
