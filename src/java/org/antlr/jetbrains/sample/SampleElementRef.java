@@ -68,7 +68,11 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 			case RULE_call_expr :
 				Collection<? extends PsiElement> nameNodes =
 					XPath.findAll(SampleLanguage.INSTANCE, root, "/script/function/ID");
-				return Trees.toMap(nameNodes).get(id);
+				PsiElement idNode = Trees.toMap(nameNodes).get(id);
+				return idNode;
+//				if ( idNode!=null ) {
+//					return idNode.getParent(); // return function node
+//				}
 			case RULE_statement :
 			case RULE_expr :
 			case RULE_primary :
@@ -78,11 +82,28 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 		return null;
 	}
 
-	/** Return value appears to be ignored. Just do a myElement.replace(). */
+	/** Return value appears to be ignored. Without this method, we get an error.
+	 *  I also note that myElement.replace(newNode) works but
+	 *  myElement.getNode().replaceChild(idNode, newID.getNode()) does not.
+	 *  No error but the item is not actually changed in the document.
+	 */
 	@Override
 	public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
 		System.out.println(getClass().getSimpleName()+".handleElementRename("+myElement.getText()+"->"+newElementName+
 			                   ") on "+myElement+" at "+Integer.toHexString(myElement.hashCode()));
+//		ASTNode idNode = myElement.getNode().findChildByType(SampleParserDefinition.ID);
+//		if (idNode != null) {
+//			PsiElement newID = Trees.createLeafFromText(myElement.getProject(),
+//			                                            SampleLanguage.INSTANCE,
+//			                                            myElement.getContext(),
+//			                                            newElementName,
+//			                                            SampleParserDefinition.ID);
+//			if ( newID!=null ) {
+//				myElement.getNode().replaceChild(idNode, newID.getNode());
+//			}
+//		}
+//		return myElement;
+
 		Project project = getElement().getProject();
 		List<TokenIElementType> tokenIElementTypes =
 			PSIElementTypeFactory.getTokenIElementTypes(SampleLanguage.INSTANCE);
@@ -93,7 +114,7 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 		                                              tokenIElementTypes.get(SampleLanguageLexer.ID));
 //		System.out.println("createLeafFromText() creates "+newNode+" at "+Integer.toHexString(newNode.hashCode()));
 		newNode = myElement.replace(newNode);
-		System.out.println("handleElementRename("+newElementName+") returns "+newNode+" at "+Integer.toHexString(newNode.hashCode()));
+//		System.out.println("handleElementRename("+newElementName+") returns "+newNode+" at "+Integer.toHexString(newNode.hashCode()));
 		return newNode;
 	}
 

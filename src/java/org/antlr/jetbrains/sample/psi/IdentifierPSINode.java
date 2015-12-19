@@ -1,18 +1,22 @@
 package org.antlr.jetbrains.sample.psi;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
+import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
 import org.antlr.jetbrains.adaptor.psi.Trees;
 import org.antlr.jetbrains.sample.SampleElementRef;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.antlr.jetbrains.sample.SampleParserDefinition;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_formal_arg;
+import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_function;
+import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_vardef;
 
 /** From doc: "Every element which can be renamed or referenced
  *             needs to implement com.intellij.psi.PsiNamedElement interface."
@@ -45,53 +49,32 @@ public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement
 	@Override
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
 		System.out.println("IdentifierPSINode.setName("+name+") on "+this+" at "+Integer.toHexString(this.hashCode()));
-		ASTNode idNode = getNode().findChildByType(SampleParserDefinition.ID);
-		if (idNode != null) {
-			PsiElement newID = Trees.createLeafFromText(getProject(),
-			                                              SampleLanguage.INSTANCE,
-			                                              getContext(),
-			                                              name,
-			                                              SampleParserDefinition.ID);
-			if ( newID!=null ) {
-				getNode().replaceChild(idNode, newID.getNode());
-			}
+		PsiElement newID = Trees.createLeafFromText(getProject(),
+		                                            SampleLanguage.INSTANCE,
+		                                            getContext(),
+		                                            name,
+		                                            SampleParserDefinition.ID);
+		if ( newID!=null ) {
+			this.replace(newID); // use replace on leaves but replaceChild on ID nodes that are part of defs/decls.
+			return newID;
 		}
-		return this;
-
-		/*
-		From doc: "Creating a fully correct AST node from scratch is
-		          quite difficult. Thus, surprisingly, the easiest way to
-		          get the replacement node is to create a dummy file in the
-		          custom language so that it would contain the necessary
-		          node in its parse tree, build the parse tree and
-		          extract the necessary node from it.
-		 */
-//		List<TokenIElementType> tokenIElementTypes =
-//			PSIElementTypeFactory.getTokenIElementTypes(SampleLanguage.INSTANCE);
-//		TokenIElementType idElType = tokenIElementTypes.get(SampleLanguageLexer.ID);
-//		PsiElement newNode = Trees.createLeafFromText(getProject(),
-//		                                              SampleLanguage.INSTANCE,
-//		                                              getContext(),
-//		                                              name, idElType);
-//
-//		return this.replace(newNode);
+		return null; // return this and return null seem to have same functionality. I think result is ignored
 	}
 
 	@Override
 	public PsiReference getReference() {
+		PsiElement parent = getParent();
+		IElementType elType = parent.getNode().getElementType();
+		// do not return a reference for the ID nodes in a definition
+		if ( elType instanceof RuleIElementType ) {
+			int ruleIndex = ((RuleIElementType) elType).getRuleIndex();
+			switch ( ruleIndex ) {
+				case RULE_function:
+				case RULE_vardef:
+				case RULE_formal_arg:
+					return null;
+			}
+		}
 		return new SampleElementRef(this, getText());
-//		PsiElement parent = getParent();
-//		IElementType elType = parent.getNode().getElementType();
-//		// do not return a reference for the ID nodes in a definition
-//		if ( elType instanceof RuleIElementType) {
-//			int ruleIndex = ((RuleIElementType) elType).getRuleIndex();
-//			switch ( ruleIndex ) {
-//				case RULE_function:
-//				case RULE_vardef:
-//				case RULE_formal_arg:
-//					return null;
-//			}
-//		}
-//		return new SampleElementRef(this, getText());
 	}
 }
