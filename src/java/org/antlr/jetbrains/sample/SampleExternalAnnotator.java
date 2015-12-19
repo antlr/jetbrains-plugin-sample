@@ -15,6 +15,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/** An external annotator is an object that analyzes code in a document
+ *  and annotates the PSI elements with errors or warnings. Because such
+ *  analysis can be expensive, we don't want it in the GUI event loop. Jetbrains
+ *  provides this external annotator mechanism to run these analyzers out of band.
+ */
 public class SampleExternalAnnotator extends ExternalAnnotator<PsiFile, List<SampleExternalAnnotator.Issue>> {
     // NOTE: can't use instance vars as only 1 instance
 
@@ -31,7 +36,13 @@ public class SampleExternalAnnotator extends ExternalAnnotator<PsiFile, List<Sam
 		return file;
 	}
 
-	/** Called 2nd; look for trouble in file and return list of issues. */
+	/** Called 2nd; look for trouble in file and return list of issues.
+	 *
+	 *  For most custom languages, you would not reimplement your semantic
+	 *  analyzer using PSI trees. Instead, here is where you would call out to
+	 *  your custom languages compiler or interpreter to get error messages
+	 *  or other bits of information you'd like to annotate the document with.
+	 */
 	@Nullable
 	@Override
 	public List<Issue> doAnnotate(final PsiFile file) {

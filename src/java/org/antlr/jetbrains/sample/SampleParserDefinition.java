@@ -1,8 +1,8 @@
 package org.antlr.jetbrains.sample;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
@@ -14,23 +14,33 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.antlr.jetbrains.adaptor.lexer.ANTLRLexerAdaptor;
 import org.antlr.jetbrains.adaptor.lexer.PSIElementTypeFactory;
+import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
+import org.antlr.jetbrains.adaptor.lexer.TokenIElementType;
 import org.antlr.jetbrains.adaptor.parser.ANTLRParserAdaptor;
 import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNodeAdaptor;
 import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.parser.SampleLanguageParser;
+import org.antlr.jetbrains.sample.psi.FunctionSubtree;
 import org.antlr.jetbrains.sample.psi.SamplePSIFileRoot;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class SampleParserDefinition implements ParserDefinition {
 	public static final IFileElementType FILE =
 		new IFileElementType(SampleLanguage.INSTANCE);
+
+	public static TokenIElementType ID;
 
 	static {
 		PSIElementTypeFactory.defineLanguageIElementTypes(SampleLanguage.INSTANCE,
 		                                                  SampleLanguageParser.tokenNames,
 		                                                  SampleLanguageParser.ruleNames);
+		List<TokenIElementType> tokenIElementTypes =
+			PSIElementTypeFactory.getTokenIElementTypes(SampleLanguage.INSTANCE);
+		ID = tokenIElementTypes.get(SampleLanguageLexer.ID);
 	}
 
 	public static final TokenSet COMMENTS =
@@ -62,7 +72,12 @@ public class SampleParserDefinition implements ParserDefinition {
 		return new ANTLRParserAdaptor(SampleLanguage.INSTANCE, parser) {
 			@Override
 			protected ParseTree parse(Parser parser, IElementType root) {
-				return ((SampleLanguageParser)parser).script();
+				// start rule depends on root passed in; sometimes we want to create an ID node etc...
+				if ( root instanceof IFileElementType ) {
+					return ((SampleLanguageParser) parser).script();
+				}
+				// let's hope it's an ID as needed by "rename function"
+				return ((SampleLanguageParser) parser).primary();
 			}
 		};
 	}
@@ -111,16 +126,44 @@ public class SampleParserDefinition implements ParserDefinition {
 		return new SamplePSIFileRoot(viewProvider);
 	}
 
-	/** Convert from *internal* parse node (AST they call it) to final PSI node. This
-	 *  converts only internal rule nodes apparently, not leaf nodes. Leaves
-	 *  are just tokens I guess.
+	/** Convert from *NON-LEAF* parse node (AST they call it)
+	 *  to PSI node. Leaves are created in the AST factory.
+	 *  Rename re-factoring can cause this to be
+	 *  called on a TokenIElementType since we want to rename ID nodes.
+	 *  In that case, this method is called to create the root node
+	 *  but with ID type. Kind of strange, but we can simply create a
+	 *  ASTWrapperPsiElement to make everything work correctly.
 	 *
-	 *  If you don't care to distinguish PSI nodes by type, it is sufficient
-	 *  to create a {@link ASTWrapperPsiElement} around the parse tree node
-	 *  (ASTNode in jetbrains speak).
+	 *  RuleIElementType.  Ah! It's that ID is the root
+	 *  IElementType requested to parse, which means that the root
+	 *  node returned from parsetree->PSI conversion.  But, it
+	 *  must be a CompositeElement! The adaptor calls
+	 *  rootMarker.done(root) to finish off the PSI conversion.
+	 *  See {@link ANTLRParserAdaptor#parse(IElementType root,
+	 *  PsiBuilder)}
+	 *
+	 *  If you don't care to distinguish PSI nodes by type, it is
+	 *  sufficient to create a {@link ANTLRPsiNodeAdaptor} around
+	 *  the parse tree node
 	 */
 	@NotNull
 	public PsiElement createElement(ASTNode node) {
-		return new ANTLRPsiNodeAdaptor(node);
+		IElementType elType = node.getElementType();
+		if ( elType instanceof TokenIElementType ) {
+			return new ANTLRPsiNodeAdaptor(node);
+		}
+		if ( !(elType instanceof RuleIElementType) ) {
+			return new ANTLRPsiNodeAdaptor(node);
+		}
+		RuleIElementType ruleElType = (RuleIElementType) elType;
+		switch ( ruleElType.getRuleIndex() ) {
+			case SampleLanguageParser.RULE_function :
+				return new FunctionSubtree(node);
+//			case SampleLanguageParser.RULE_vardef :
+//			case SampleLanguageParser.RULE_formal_arg :
+//				return new IdentifierDefSubtree(node);
+			default :
+				return new ANTLRPsiNodeAdaptor(node);
+		}
 	}
 }

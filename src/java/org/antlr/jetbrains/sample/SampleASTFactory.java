@@ -7,11 +7,14 @@ import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.PsiCoreCommentImpl;
 import com.intellij.psi.tree.IElementType;
+import org.antlr.jetbrains.adaptor.lexer.TokenIElementType;
+import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
+import org.antlr.jetbrains.sample.psi.IdentifierPSINode;
 import org.jetbrains.annotations.NotNull;
 
 /** How to create parse tree nodes (Jetbrains calls them AST nodes). Later
  *  non-leaf nodes are converted to PSI nodes by the {@link ParserDefinition}.
- *  Leaf nodes are already considered PSI nodes.  This is just
+ *  Leaf nodes are already considered PSI nodes.  This is mostly just
  *  {@link CoreASTFactory} but with comments on the methods that you might want
  *  to override.
  */
@@ -34,6 +37,14 @@ public class SampleASTFactory extends CoreASTFactory {
 	@NotNull
 	@Override
 	public LeafElement createLeaf(@NotNull IElementType type, CharSequence text) {
+		if ( type instanceof TokenIElementType &&
+			 ((TokenIElementType) type).getANTLRTokenType()==SampleLanguageLexer.ID)
+		{
+			// found an ID node; here we do not distinguish between definitions and references
+			// because we have no context information here. All we know is that
+			// we have an identifier node that will be connected somewhere in a tree.
+			return new IdentifierPSINode(type, text);
+		}
 		LeafElement leaf = super.createLeaf(type, text);
 		return leaf;
     }
