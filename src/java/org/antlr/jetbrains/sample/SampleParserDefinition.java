@@ -72,12 +72,9 @@ public class SampleParserDefinition implements ParserDefinition {
 		return new ANTLRParserAdaptor(SampleLanguage.INSTANCE, parser) {
 			@Override
 			protected ParseTree parse(Parser parser, IElementType root) {
-				// start rule depends on root passed in; sometimes we want to create an ID node etc...
-				if ( root instanceof IFileElementType ) {
-					return ((SampleLanguageParser) parser).script();
-				}
-				// let's hope it's an ID as needed by "rename function"
-				return ((SampleLanguageParser) parser).primary();
+				// start rule is always script and so it must also handle
+				// plain ID tokens for renaming.
+				return ((SampleLanguageParser) parser).script();
 			}
 		};
 	}
