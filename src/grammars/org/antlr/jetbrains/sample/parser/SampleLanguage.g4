@@ -1,7 +1,14 @@
 grammar SampleLanguage;
 
+/** The start rule must be whatever you would normally use, such as script
+ *  or compilationUnit, etc... BUT, it must also include an alternative or multiple
+ *  alternatives to handle parsing some phrases of interest.
+ *  So far this is only for parsing identifier references but it might also
+ *  include strings if we were renaming elements within a string, for example.
+ */
 script
 	:	function* statement* EOF
+	|	primary EOF // for parsing id references
 	;
 
 function
