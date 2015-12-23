@@ -19,14 +19,14 @@ import java.util.Collection;
 
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_call_expr;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_expr;
-import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_formal_arg;
-import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_function;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_primary;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_statement;
-import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_vardef;
 
-public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
-	public SampleElementRef(@NotNull IdentifierPSINode element) {
+/** A reference object associated with a IdentifierPSINode underneath a
+ *  call_expr rule subtree root.
+ */
+public class SampleFunctionRef extends PsiReferenceBase<IdentifierPSINode> {
+	public SampleFunctionRef(@NotNull IdentifierPSINode element) {
 		/** WARNING: You must send up the text range or you get this error:
 		 * "Cannot find manipulator for PsiElement(ID) in org.antlr.jetbrains.sample.SampleElementRef"...
 		 *  when you click on an identifier.  During rename you get this
@@ -45,22 +45,22 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 		return new Object[0];
 	}
 
-	/** Resolve a reference to the definition subtree, not the ID
+	/** Resolve a reference to the definition subtree, do not resolve to the ID
 	 *  child of the subtree root.
 	 */
 	@Nullable
 	@Override
 	public PsiElement resolve() {
+//		System.out.println(getClass().getSimpleName()+
+//			                   ".resolve("+myElement.getName()+
+//			                   " at "+Integer.toHexString(myElement.hashCode())+")");
+
 		ANTLRPsiNodeAdaptor root = Trees.getRoot(myElement);
 		PsiElement parent = myElement.getParent();
 		IElementType elType = parent.getNode().getElementType();
 		if ( !(elType instanceof RuleIElementType) ) return null;
 
 		switch ( ((RuleIElementType)elType).getRuleIndex() ) {
-			case RULE_function :
-			case RULE_vardef :
-			case RULE_formal_arg :
-				return myElement; // we're at the def already
 			case RULE_call_expr :
 				Collection<? extends PsiElement> nameNodes =
 					XPath.findAll(SampleLanguage.INSTANCE, root, "/script/function/ID");

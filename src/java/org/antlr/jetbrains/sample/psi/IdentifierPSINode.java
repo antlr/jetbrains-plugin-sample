@@ -8,17 +8,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
 import org.antlr.jetbrains.adaptor.psi.Trees;
-import org.antlr.jetbrains.sample.SampleElementRef;
+import org.antlr.jetbrains.sample.SampleFunctionRef;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.antlr.jetbrains.sample.SampleParserDefinition;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_call_expr;
-import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_formal_arg;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_function;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_statement;
-import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_vardef;
 
 /** From doc: "Every element which can be renamed or referenced
  *             needs to implement com.intellij.psi.PsiNamedElement interface."
@@ -28,11 +26,14 @@ import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_vardef
  *  LeafPsiElement.  Your ASTFactory should create this kind of object for
  *  ID tokens. This node is for references *and* definitions because you can
  *  highlight a function and say "jump to definition". Also we want defs
- *  to be included in "find usages."
- *  PsiNameIdentifierOwner implementations are the corresponding subtree roots
- *  that define symbols.
+ *  to be included in "find usages." Besides, there is no context information
+ *  in the AST factory with which you could decide whether this node
+ *  is a definition or a reference.
  *
- *  You can click on an ID in the editor and ask for a rename for all nodes
+ *  PsiNameIdentifierOwner (vs PsiNamedElement) implementations are the
+ *  corresponding subtree roots that define symbols.
+ *
+ *  You can click on an ID in the editor and ask for a rename for any node
  *  of this type.
  */
 public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement {
@@ -45,8 +46,9 @@ public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement
 		return getText();
 	}
 
-	/** "Return the element corresponding to this element after the rename (either <code>this</code>
-	 *   or a different element if the rename caused the element to be replaced)."
+	/** Alter this node to have text specified by the argument. Do this by
+	 *  creating a new node through parsing of an ID and then doing a
+	 *  replace.
 	 */
 	@Override
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
@@ -77,20 +79,27 @@ public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement
 		return this;
 	}
 
+	/** Create and return a PsiReference object associated with this ID
+	 *  node. The reference object will be asked to resolve this ref
+	 *  by using the text of this node to identify the appropriate definition
+	 *  site. The definition site is typically a subtree for a function
+	 *  or variable definition whereas this reference is just to this ID
+	 *  leaf node.
+	 *
+	 *  As the AST factory has no context and cannot create different kinds
+	 *  of PsiNamedElement nodes according to context, every ID node
+	 *  in the tree will be of this type. So, we distinguish references
+	 *  from definitions or other uses by looking at context in this method
+	 *  as we have parent (context) information.
+	 */
 	@Override
 	public PsiReference getReference() {
 		PsiElement parent = getParent();
 		IElementType elType = parent.getNode().getElementType();
 		// do not return a reference for the ID nodes in a definition
-		if ( elType instanceof RuleIElementType ) {
-			int ruleIndex = ((RuleIElementType) elType).getRuleIndex();
-			switch ( ruleIndex ) {
-				case RULE_function:
-				case RULE_vardef:
-				case RULE_formal_arg:
-					return null;
-			}
+		if ( elType instanceof RuleIElementType && ((RuleIElementType) elType).getRuleIndex()==RULE_call_expr ) {
+			return new SampleFunctionRef(this);
 		}
-		return new SampleElementRef(this);
+		return null;
 	}
 }
