@@ -10,6 +10,7 @@ import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
 import org.antlr.jetbrains.adaptor.psi.Trees;
 import org.antlr.jetbrains.sample.SampleElementRef;
 import org.antlr.jetbrains.sample.SampleLanguage;
+import org.antlr.jetbrains.sample.SampleParserDefinition;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +68,9 @@ public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement
 		System.out.println("IdentifierPSINode.setName("+name+") on "+kind+this+" at "+Integer.toHexString(this.hashCode()));
 		PsiElement newID = Trees.createLeafFromText(getProject(),
 		                                            SampleLanguage.INSTANCE,
-		                                            name);
+		                                            getContext(),
+		                                            name,
+		                                            SampleParserDefinition.ID);
 		if ( newID!=null ) {
 			return this.replace(newID); // use replace on leaves but replaceChild on ID nodes that are part of defs/decls.
 		}

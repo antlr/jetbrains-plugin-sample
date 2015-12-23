@@ -32,11 +32,9 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 		 *  when you click on an identifier.  During rename you get this
 		 *  error too if you don't impl handleElementRename().
 		 *
-		 *  Wow. This also solved the rename issue that was causing GUI thread
-		 *  to deadlock after the rename.
-		 *
 		 *  The range is relative to start of the token; I guess for
 		 *  qualified references we might want to use just a part of the name.
+		 *  Or we might look inside string literals for stuff.
 		 */
 		super(element, new TextRange(0, element.getText().length()));
 	}
@@ -47,6 +45,9 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 		return new Object[0];
 	}
 
+	/** Resolve a reference to the definition subtree, not the ID
+	 *  child of the subtree root.
+	 */
 	@Nullable
 	@Override
 	public PsiElement resolve() {
@@ -80,7 +81,8 @@ public class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 	/** Change the REFERENCE's ID node (not the targeted def's ID node)
 	 *  to reflect a rename.
 	 *
-	 *  Return value appears to be ignored. Without this method, we get an error.
+	 *  Without this method, we get an error.
+	 *
 	 *  getElement() refers to the identifier node that references the definition.
 	 */
 	@Override
