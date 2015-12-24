@@ -1,10 +1,19 @@
+/** A simple language for use with this sample plugin.
+ *  It's C-like but without semicolons. Symbol resolution semantics are
+ *  C-like: resolve symbol in current scope. If not in this scope, ask
+ *  enclosing scope to resolve (recurse up tree until no more scopes or found).
+ *  Forward refs allowed for functions but not variables. Globals must
+ *  appear first syntactically.
+ *
+ *  Generate the parser via "mvn compile" from root dir of project.
+ */
 grammar SampleLanguage;
 
 /** The start rule must be whatever you would normally use, such as script
  *  or compilationUnit, etc...
  */
 script
-	:	function* statement* EOF
+	:	vardef* function* statement* EOF
 	;
 
 function
@@ -23,7 +32,7 @@ type:	'int'                                               # IntTypeSpec
 	;
 
 block
-	:  '{' statement* '}';
+	:  '{' (statement|vardef)* '}';
 
 statement
 	:	'if' '(' expr ')' statement ('else' statement)?		# If
@@ -32,7 +41,6 @@ statement
 	|	ID '[' expr ']' '=' expr							# ElementAssign
 	|	call_expr											# CallStatement
 	|	'print' '(' expr? ')'								# Print
-	|   vardef									            # VarDefStatement
 	|	'return' expr										# Return
 	|	block				 								# BlockStatement
 	;

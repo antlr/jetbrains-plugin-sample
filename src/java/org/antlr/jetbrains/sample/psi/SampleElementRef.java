@@ -51,9 +51,9 @@ public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINod
 	@Nullable
 	@Override
 	public PsiElement resolve() {
-		System.out.println(getClass().getSimpleName()+
-		                   ".resolve("+myElement.getName()+
-		                   " at "+Integer.toHexString(myElement.hashCode())+")");
+//		System.out.println(getClass().getSimpleName()+
+//		                   ".resolve("+myElement.getName()+
+//		                   " at "+Integer.toHexString(myElement.hashCode())+")");
 		ScopeNode scope = (ScopeNode)myElement.getContext();
 		if ( scope==null ) return null;
 
@@ -63,8 +63,8 @@ public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINod
 	@Override
 	public boolean isReferenceTo(PsiElement def) {
 		String refName = myElement.getName();
-		System.out.println(getClass().getSimpleName()+".isReferenceTo("+refName+"->"+def.getText()+")");
-		// sometimes def comes in pointing to ID node itself. weird
+//		System.out.println(getClass().getSimpleName()+".isReferenceTo("+refName+"->"+def.getText()+")");
+		// sometimes def comes in pointing to ID node itself. depends on what you click on
 		if ( def instanceof IdentifierPSINode && isDefSubtree(def.getParent()) ) {
 			def = def.getParent();
 		}
