@@ -6,7 +6,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
 import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNodeAdaptor;
+import org.antlr.jetbrains.sample.psi.FunctionSubtree;
 import org.antlr.jetbrains.sample.psi.IdentifierPSINode;
+import org.antlr.jetbrains.sample.psi.VardefSubtree;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +23,9 @@ import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_vardef
 public class SampleFindUsagesProvider implements FindUsagesProvider {
 	@Override
 	public boolean canFindUsagesFor(PsiElement psiElement) {
-		return psiElement instanceof IdentifierPSINode;
+		return psiElement instanceof IdentifierPSINode ||
+			   psiElement instanceof FunctionSubtree || // intellij passes target (defs) not just refs
+			   psiElement instanceof VardefSubtree;
 	}
 
 	@Nullable

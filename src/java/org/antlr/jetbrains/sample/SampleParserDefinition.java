@@ -20,8 +20,10 @@ import org.antlr.jetbrains.adaptor.parser.ANTLRParserAdaptor;
 import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNodeAdaptor;
 import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.parser.SampleLanguageParser;
+import org.antlr.jetbrains.sample.psi.ArgdefSubtree;
 import org.antlr.jetbrains.sample.psi.FunctionSubtree;
 import org.antlr.jetbrains.sample.psi.SamplePSIFileRoot;
+import org.antlr.jetbrains.sample.psi.VardefSubtree;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.jetbrains.annotations.NotNull;
@@ -159,9 +161,10 @@ public class SampleParserDefinition implements ParserDefinition {
 		switch ( ruleElType.getRuleIndex() ) {
 			case SampleLanguageParser.RULE_function :
 				return new FunctionSubtree(node);
-//			case SampleLanguageParser.RULE_vardef :
-//			case SampleLanguageParser.RULE_formal_arg :
-//				return new IdentifierDefSubtree(node);
+			case SampleLanguageParser.RULE_vardef :
+				return new VardefSubtree(node);
+			case SampleLanguageParser.RULE_formal_arg :
+				return new ArgdefSubtree(node);
 			default :
 				return new ANTLRPsiNodeAdaptor(node);
 		}

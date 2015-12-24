@@ -8,14 +8,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
 import org.antlr.jetbrains.adaptor.psi.Trees;
-import org.antlr.jetbrains.sample.SampleFunctionRef;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.antlr.jetbrains.sample.SampleParserDefinition;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_call_expr;
+import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_expr;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_function;
+import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_primary;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_statement;
 
 /** From doc: "Every element which can be renamed or referenced
@@ -67,7 +68,8 @@ public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement
 				kind = "func def ";
 			}
 		}
-		System.out.println("IdentifierPSINode.setName("+name+") on "+kind+this+" at "+Integer.toHexString(this.hashCode()));
+		System.out.println("IdentifierPSINode.setName("+name+") on "+
+			                   kind+this+" at "+Integer.toHexString(this.hashCode()));
 		PsiElement newID = Trees.createLeafFromText(getProject(),
 		                                            SampleLanguage.INSTANCE,
 		                                            getContext(),
@@ -97,8 +99,15 @@ public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement
 		PsiElement parent = getParent();
 		IElementType elType = parent.getNode().getElementType();
 		// do not return a reference for the ID nodes in a definition
-		if ( elType instanceof RuleIElementType && ((RuleIElementType) elType).getRuleIndex()==RULE_call_expr ) {
-			return new SampleFunctionRef(this);
+		if ( elType instanceof RuleIElementType ) {
+			switch ( ((RuleIElementType) elType).getRuleIndex() ) {
+				case RULE_statement :
+				case RULE_expr :
+				case RULE_primary :
+					return new VariableRef(this);
+				case RULE_call_expr :
+					return new FunctionRef(this);
+			}
 		}
 		return null;
 	}
