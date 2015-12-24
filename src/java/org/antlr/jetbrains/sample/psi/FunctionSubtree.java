@@ -3,6 +3,7 @@ package org.antlr.jetbrains.sample.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
+import org.antlr.jetbrains.adaptor.SymtabUtils;
 import org.antlr.jetbrains.adaptor.psi.IdentifierDefSubtree;
 import org.antlr.jetbrains.adaptor.psi.ScopeNode;
 import org.antlr.jetbrains.sample.SampleLanguage;
