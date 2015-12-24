@@ -50,7 +50,10 @@ public class SamplePSIFileRoot extends PsiFileBase implements ScopeNode {
 //		System.out.println(getClass().getSimpleName()+
 //		                   ".resolve("+element.getName()+
 //		                   " at "+Integer.toHexString(element.hashCode())+")");
-
+		if ( element.getParent() instanceof CallSubtree ) {
+			return SymtabUtils.resolve(this, SampleLanguage.INSTANCE,
+			                           element, "/script/function/ID");
+		}
 		return SymtabUtils.resolve(this, SampleLanguage.INSTANCE,
 		                           element, "/script/vardef/ID");
 	}

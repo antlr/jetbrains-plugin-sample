@@ -22,6 +22,7 @@ import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.parser.SampleLanguageParser;
 import org.antlr.jetbrains.sample.psi.ArgdefSubtree;
 import org.antlr.jetbrains.sample.psi.BlockSubtree;
+import org.antlr.jetbrains.sample.psi.CallSubtree;
 import org.antlr.jetbrains.sample.psi.FunctionSubtree;
 import org.antlr.jetbrains.sample.psi.SamplePSIFileRoot;
 import org.antlr.jetbrains.sample.psi.VardefSubtree;
@@ -168,6 +169,8 @@ public class SampleParserDefinition implements ParserDefinition {
 				return new ArgdefSubtree(node);
 			case SampleLanguageParser.RULE_block :
 				return new BlockSubtree(node);
+			case SampleLanguageParser.RULE_call_expr :
+				return new CallSubtree(node);
 			default :
 				return new ANTLRPsiNode(node);
 		}
