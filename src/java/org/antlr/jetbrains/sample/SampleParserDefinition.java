@@ -17,10 +17,11 @@ import org.antlr.jetbrains.adaptor.lexer.PSIElementTypeFactory;
 import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
 import org.antlr.jetbrains.adaptor.lexer.TokenIElementType;
 import org.antlr.jetbrains.adaptor.parser.ANTLRParserAdaptor;
-import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNodeAdaptor;
+import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNode;
 import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.parser.SampleLanguageParser;
 import org.antlr.jetbrains.sample.psi.ArgdefSubtree;
+import org.antlr.jetbrains.sample.psi.BlockSubtree;
 import org.antlr.jetbrains.sample.psi.FunctionSubtree;
 import org.antlr.jetbrains.sample.psi.SamplePSIFileRoot;
 import org.antlr.jetbrains.sample.psi.VardefSubtree;
@@ -145,17 +146,17 @@ public class SampleParserDefinition implements ParserDefinition {
 	 *  PsiBuilder)}
 	 *
 	 *  If you don't care to distinguish PSI nodes by type, it is
-	 *  sufficient to create a {@link ANTLRPsiNodeAdaptor} around
+	 *  sufficient to create a {@link ANTLRPsiNode} around
 	 *  the parse tree node
 	 */
 	@NotNull
 	public PsiElement createElement(ASTNode node) {
 		IElementType elType = node.getElementType();
 		if ( elType instanceof TokenIElementType ) {
-			return new ANTLRPsiNodeAdaptor(node);
+			return new ANTLRPsiNode(node);
 		}
 		if ( !(elType instanceof RuleIElementType) ) {
-			return new ANTLRPsiNodeAdaptor(node);
+			return new ANTLRPsiNode(node);
 		}
 		RuleIElementType ruleElType = (RuleIElementType) elType;
 		switch ( ruleElType.getRuleIndex() ) {
@@ -165,8 +166,10 @@ public class SampleParserDefinition implements ParserDefinition {
 				return new VardefSubtree(node);
 			case SampleLanguageParser.RULE_formal_arg :
 				return new ArgdefSubtree(node);
+			case SampleLanguageParser.RULE_block :
+				return new BlockSubtree(node);
 			default :
-				return new ANTLRPsiNodeAdaptor(node);
+				return new ANTLRPsiNode(node);
 		}
 	}
 }

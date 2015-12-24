@@ -3,10 +3,10 @@ package org.antlr.jetbrains.sample.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
+import org.antlr.jetbrains.adaptor.psi.ANTLRPsiLeafNode;
 import org.antlr.jetbrains.adaptor.psi.Trees;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.antlr.jetbrains.sample.SampleParserDefinition;
@@ -37,7 +37,7 @@ import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_statem
  *  You can click on an ID in the editor and ask for a rename for any node
  *  of this type.
  */
-public class IdentifierPSINode extends LeafPsiElement implements PsiNamedElement {
+public class IdentifierPSINode extends ANTLRPsiLeafNode implements PsiNamedElement {
 	public IdentifierPSINode(IElementType type, CharSequence text) {
 		super(type, text);
 	}

@@ -5,7 +5,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.util.IncorrectOperationException;
+import org.antlr.jetbrains.adaptor.psi.ScopeNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINode> {
 	public SampleElementRef(@NotNull IdentifierPSINode element) {
@@ -30,7 +32,7 @@ public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINod
 	/** Change the REFERENCE's ID node (not the targeted def's ID node)
 	 *  to reflect a rename.
 	 *
-	 *  Without this method, we get an error.
+	 *  Without this method, we get an error ("Cannot find manipulator...").
 	 *
 	 *  getElement() refers to the identifier node that references the definition.
 	 */
@@ -40,6 +42,22 @@ public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINod
 			                   ") on "+myElement+" at "+Integer.toHexString(myElement.hashCode()));
 
 		return myElement.setName(newElementName);
+	}
+
+	/** Resolve a reference to the definition subtree (subclass of
+	 *  IdentifierDefSubtree), do not resolve to the ID child of that
+	 *  definition subtree root.
+	 */
+	@Nullable
+	@Override
+	public PsiElement resolve() {
+		System.out.println(getClass().getSimpleName()+
+		                   ".resolve("+myElement.getName()+
+		                   " at "+Integer.toHexString(myElement.hashCode())+")");
+		ScopeNode scope = (ScopeNode)myElement.getContext();
+		if ( scope==null ) return null;
+
+		return scope.resolve(myElement);
 	}
 
 	@Override
@@ -58,6 +76,8 @@ public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINod
 		return false;
 	}
 
-	/** Is the def a subtree associated with refs to getElement()'s kind of node? */
+	/** Is the targeted def a subtree associated with this ref's kind of node?
+	 *  E.g., for a variable def, this should return true for VardefSubtree.
+	 */
 	public abstract boolean isDefSubtree(PsiElement def);
 }

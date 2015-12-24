@@ -2,10 +2,9 @@ package org.antlr.jetbrains.sample;
 
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
-import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNodeAdaptor;
+import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNode;
 import org.antlr.jetbrains.sample.psi.FunctionSubtree;
 import org.antlr.jetbrains.sample.psi.IdentifierPSINode;
 import org.antlr.jetbrains.sample.psi.VardefSubtree;
@@ -21,10 +20,11 @@ import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_statem
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_vardef;
 
 public class SampleFindUsagesProvider implements FindUsagesProvider {
+	/** Is "find usages" meaningful for a kind of definition subtree? */
 	@Override
 	public boolean canFindUsagesFor(PsiElement psiElement) {
-		return psiElement instanceof IdentifierPSINode ||
-			   psiElement instanceof FunctionSubtree || // intellij passes target (defs) not just refs
+		return psiElement instanceof IdentifierPSINode || // the case where we highlight the ID in def subtree itself
+			   psiElement instanceof FunctionSubtree ||   // remaining cases are for resolve() results
 			   psiElement instanceof VardefSubtree;
 	}
 
@@ -44,11 +44,9 @@ public class SampleFindUsagesProvider implements FindUsagesProvider {
 	@NotNull
 	@Override
 	public String getType(PsiElement element) {
-		ProgressManager.checkCanceled();
-
 		// The parent of an ID node will be a RuleIElementType:
 		// function, vardef, formal_arg, statement, expr, call_expr, primary
-		ANTLRPsiNodeAdaptor parent = (ANTLRPsiNodeAdaptor)element.getParent();
+		ANTLRPsiNode parent = (ANTLRPsiNode)element.getParent();
 		RuleIElementType elType = (RuleIElementType)parent.getNode().getElementType();
 		switch ( elType.getRuleIndex() ) {
 			case RULE_function :
