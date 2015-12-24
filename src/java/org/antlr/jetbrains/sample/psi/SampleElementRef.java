@@ -38,8 +38,8 @@ public abstract class SampleElementRef extends PsiReferenceBase<IdentifierPSINod
 	 */
 	@Override
 	public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-		System.out.println(getClass().getSimpleName()+".handleElementRename("+myElement.getName()+"->"+newElementName+
-			                   ") on "+myElement+" at "+Integer.toHexString(myElement.hashCode()));
+//		System.out.println(getClass().getSimpleName()+".handleElementRename("+myElement.getName()+"->"+newElementName+
+//			                   ") on "+myElement+" at "+Integer.toHexString(myElement.hashCode()));
 
 		return myElement.setName(newElementName);
 	}

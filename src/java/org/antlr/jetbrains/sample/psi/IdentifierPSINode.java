@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_call_expr;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_expr;
-import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_function;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_primary;
 import static org.antlr.jetbrains.sample.parser.SampleLanguageParser.RULE_statement;
 
@@ -54,6 +53,7 @@ public class IdentifierPSINode extends ANTLRPsiLeafNode implements PsiNamedEleme
 	@Override
 	public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
 		if ( getParent()==null ) return this; // weird but it happened once
+		/*
 		IElementType elType = getParent().getNode().getElementType();
 		String kind = "??? ";
 		if ( elType instanceof RuleIElementType ) {
@@ -70,6 +70,7 @@ public class IdentifierPSINode extends ANTLRPsiLeafNode implements PsiNamedEleme
 		}
 		System.out.println("IdentifierPSINode.setName("+name+") on "+
 			                   kind+this+" at "+Integer.toHexString(this.hashCode()));
+		*/
 		PsiElement newID = Trees.createLeafFromText(getProject(),
 		                                            SampleLanguage.INSTANCE,
 		                                            getContext(),

@@ -18,9 +18,9 @@ public class BlockSubtree extends ANTLRPsiNode implements ScopeNode {
 	@Nullable
 	@Override
 	public PsiElement resolve(PsiNamedElement element) {
-		System.out.println(getClass().getSimpleName()+
-		                   ".resolve("+element.getName()+
-		                   " at "+Integer.toHexString(element.hashCode())+")");
+//		System.out.println(getClass().getSimpleName()+
+//		                   ".resolve("+element.getName()+
+//		                   " at "+Integer.toHexString(element.hashCode())+")");
 
 		return SymtabUtils.resolve(this, SampleLanguage.INSTANCE,
 		                           element, "/block/statement/vardef/ID");
