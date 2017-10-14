@@ -162,11 +162,11 @@ public class SampleParserDefinition implements ParserDefinition {
 		RuleIElementType ruleElType = (RuleIElementType) elType;
 		switch ( ruleElType.getRuleIndex() ) {
 			case SampleLanguageParser.RULE_function :
-				return new FunctionSubtree(node);
+				return new FunctionSubtree(node, elType);
 			case SampleLanguageParser.RULE_vardef :
-				return new VardefSubtree(node);
+				return new VardefSubtree(node, elType);
 			case SampleLanguageParser.RULE_formal_arg :
-				return new ArgdefSubtree(node);
+				return new ArgdefSubtree(node, elType);
 			case SampleLanguageParser.RULE_block :
 				return new BlockSubtree(node);
 			case SampleLanguageParser.RULE_call_expr :
