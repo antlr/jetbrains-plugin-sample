@@ -8,14 +8,14 @@
       <sourceFolder url="file://$MODULE_DIR$/resources/icons" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/antlr4" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/antlr4" isTestSource="false" generated="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/antlr-4.5.1-complete.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/antlr-4.7.2-complete.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>

@@ -3,9 +3,10 @@ package org.antlr.jetbrains.sample.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
-import org.antlr.jetbrains.adaptor.SymtabUtils;
-import org.antlr.jetbrains.adaptor.psi.IdentifierDefSubtree;
-import org.antlr.jetbrains.adaptor.psi.ScopeNode;
+import com.intellij.psi.tree.IElementType;
+import org.antlr.intellij.adaptor.SymtabUtils;
+import org.antlr.intellij.adaptor.psi.IdentifierDefSubtree;
+import org.antlr.intellij.adaptor.psi.ScopeNode;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
  *  Its scope is the set of arguments.
  */
 public class FunctionSubtree extends IdentifierDefSubtree implements ScopeNode {
-	public FunctionSubtree(@NotNull ASTNode node) {
-		super(node);
+	public FunctionSubtree(@NotNull ASTNode node, @NotNull IElementType idElementType) {
+		super(node, idElementType);
 	}
 
 	@Nullable

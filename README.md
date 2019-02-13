@@ -15,6 +15,6 @@ grammar files, call `mvn process-resources`.
 
 Go to `File -> Project Structure -> Project` and add a new `IntelliJ Platform Plugin SDK` or use a valid existing one.
 
-You also need the jetbrains antlr adapter. It may be imported as a git submodule with `git submodule add git@github.com:antlr/jetbrains.git adaptor`.
+You also need the jetbrains antlr adapter. It may be added with `git submodule init` and `git submodule update`.
 
 Now create a new `Run Configuration` of the type `Plugin`. 

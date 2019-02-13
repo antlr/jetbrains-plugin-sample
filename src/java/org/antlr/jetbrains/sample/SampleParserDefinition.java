@@ -12,12 +12,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.antlr.jetbrains.adaptor.lexer.ANTLRLexerAdaptor;
-import org.antlr.jetbrains.adaptor.lexer.PSIElementTypeFactory;
-import org.antlr.jetbrains.adaptor.lexer.RuleIElementType;
-import org.antlr.jetbrains.adaptor.lexer.TokenIElementType;
-import org.antlr.jetbrains.adaptor.parser.ANTLRParserAdaptor;
-import org.antlr.jetbrains.adaptor.psi.ANTLRPsiNode;
+import org.antlr.intellij.adaptor.lexer.ANTLRLexerAdaptor;
+import org.antlr.intellij.adaptor.lexer.PSIElementTypeFactory;
+import org.antlr.intellij.adaptor.lexer.RuleIElementType;
+import org.antlr.intellij.adaptor.lexer.TokenIElementType;
+import org.antlr.intellij.adaptor.parser.ANTLRParserAdaptor;
+import org.antlr.intellij.adaptor.psi.ANTLRPsiNode;
 import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.parser.SampleLanguageParser;
 import org.antlr.jetbrains.sample.psi.ArgdefSubtree;
@@ -162,11 +162,11 @@ public class SampleParserDefinition implements ParserDefinition {
 		RuleIElementType ruleElType = (RuleIElementType) elType;
 		switch ( ruleElType.getRuleIndex() ) {
 			case SampleLanguageParser.RULE_function :
-				return new FunctionSubtree(node);
+				return new FunctionSubtree(node, elType);
 			case SampleLanguageParser.RULE_vardef :
-				return new VardefSubtree(node);
+				return new VardefSubtree(node, elType);
 			case SampleLanguageParser.RULE_formal_arg :
-				return new ArgdefSubtree(node);
+				return new ArgdefSubtree(node, elType);
 			case SampleLanguageParser.RULE_block :
 				return new BlockSubtree(node);
 			case SampleLanguageParser.RULE_call_expr :

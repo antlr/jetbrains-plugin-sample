@@ -7,7 +7,7 @@ import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.PsiCoreCommentImpl;
 import com.intellij.psi.tree.IElementType;
-import org.antlr.jetbrains.adaptor.lexer.TokenIElementType;
+import org.antlr.intellij.adaptor.lexer.TokenIElementType;
 import org.antlr.jetbrains.sample.parser.SampleLanguageLexer;
 import org.antlr.jetbrains.sample.psi.IdentifierPSINode;
 import org.jetbrains.annotations.NotNull;

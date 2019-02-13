@@ -1,10 +1,10 @@
-package org.antlr.jetbrains.adaptor.test;
+package org.antlr.intellij.adaptor.test;
 
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.testFramework.ParsingTestCase;
-import org.antlr.jetbrains.adaptor.xpath.XPath;
+import org.antlr.intellij.adaptor.xpath.XPath;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.antlr.jetbrains.sample.SampleParserDefinition;
 
