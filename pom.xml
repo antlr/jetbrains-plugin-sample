@@ -32,7 +32,7 @@ and build a plug-in.
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
-			<version>4.5.1</version>
+			<version>4.7.2</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -61,7 +61,7 @@ and build a plug-in.
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>4.5.1</version>
+				<version>4.7.2</version>
 				<executions>
 					<execution>
 						<configuration>

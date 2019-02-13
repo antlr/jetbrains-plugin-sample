@@ -5,8 +5,8 @@ import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.antlr.jetbrains.adaptor.psi.Trees;
-import org.antlr.jetbrains.adaptor.xpath.XPath;
+import org.antlr.intellij.adaptor.psi.Trees;
+import org.antlr.intellij.adaptor.xpath.XPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,11 +1,13 @@
 package org.antlr.jetbrains.sample.psi;
 
 import com.intellij.lang.ASTNode;
-import org.antlr.jetbrains.adaptor.psi.IdentifierDefSubtree;
+import com.intellij.psi.tree.IElementType;
+import org.antlr.intellij.adaptor.psi.IdentifierDefSubtree;
 import org.jetbrains.annotations.NotNull;
 
 public class VardefSubtree extends IdentifierDefSubtree {
-	public VardefSubtree(@NotNull ASTNode node) {
-		super(node);
+
+	public VardefSubtree(@NotNull ASTNode node, @NotNull IElementType idElementTyp) {
+		super(node, idElementTyp);
 	}
 }
