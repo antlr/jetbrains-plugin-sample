@@ -53,3 +53,4 @@ CONTRIBUTORS:
 YYYY/MM/DD, github id, Full name, email
 2015/11/09, parrt, Terence Parr, parrt@antlr.org
 2019/02/13, Kisioj, Krzysztof Jura, kisioj@gmail.com
+2019/02/13, bjansen, Bastien Jansen, bastien.jansen@gmx.com
