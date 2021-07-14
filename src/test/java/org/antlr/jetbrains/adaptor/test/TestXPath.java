@@ -1,6 +1,5 @@
-package org.antlr.intellij.adaptor.test;
+package org.antlr.jetbrains.adaptor.test;
 
-import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.testFramework.ParsingTestCase;
@@ -8,32 +7,35 @@ import org.antlr.intellij.adaptor.xpath.XPath;
 import org.antlr.jetbrains.sample.SampleLanguage;
 import org.antlr.jetbrains.sample.SampleParserDefinition;
 
-import java.io.IOException;
 import java.util.Collection;
 
 public class TestXPath extends ParsingTestCase {
+
+	public static final String TEST_SAMPLE = "src/test/java/org/antlr/jetbrains/adaptor/test/test.sample";
+	public static final String BUBBLESORT_SAMPLE = "src/test/java/org/antlr/jetbrains/adaptor/test/bubblesort.sample";
+
 	public TestXPath() {
 		super("", "Sample", new SampleParserDefinition());
 	}
 
-	public void testSingleVarDef() throws Exception {
+	public void testSingleVarDef() {
 		String code = "var x = 1";
 		String output = code;
-		String xpath = "/script/statement";
+		String xpath = "/script";
 		checkXPathResults(code, xpath, output);
 	}
 
-	public void testMultiVarDef() throws Exception {
+	public void testMultiVarDef() {
 		String code =
 			"var x = 1\n" +
 			"var y = [1,2,3]\n";
 		String output = code;
-		String xpath = "/script/statement";
+		String xpath = "/script";
 		checkXPathResults(code, xpath, output);
 	}
 
 	public void testFuncNames() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/test.sample");
+		String code = loadFile(TEST_SAMPLE);
 		String output =
 			"f\n"+
 			"g\n"+
@@ -43,7 +45,7 @@ public class TestXPath extends ParsingTestCase {
 	}
 
 	public void testAllIDs() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/test.sample");
+		String code = loadFile(TEST_SAMPLE);
 		String output =
 			"f\n"+
 			"x\n"+
@@ -60,7 +62,7 @@ public class TestXPath extends ParsingTestCase {
 	}
 
 	public void testAnyVarDef() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/test.sample");
+		String code = loadFile(TEST_SAMPLE);
 		String output =
 			"var y = x\n"+
 			"var z = 9";
@@ -69,7 +71,7 @@ public class TestXPath extends ParsingTestCase {
 	}
 
 	public void testVarDefIDs() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/test.sample");
+		String code = loadFile(TEST_SAMPLE);
 		String output =
 			"y\n" +
 			"z";
@@ -78,30 +80,29 @@ public class TestXPath extends ParsingTestCase {
 	}
 
 	public void testAllVarDefIDsInScopes() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/bubblesort.sample");
+		String code = loadFile(BUBBLESORT_SAMPLE);
 		String output =
 			"x\n"+
 			"i\n"+
 			"j\n"+
 			"swap\n"+
 			"x";
-		String xpath = "//block/statement/vardef/ID";
+		String xpath = "//block/vardef/ID";
 		checkXPathResults(code, xpath, output);
 	}
 
 	public void testTopLevelVarDefIDsInScopes() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/bubblesort.sample");
+		String code = loadFile(BUBBLESORT_SAMPLE);
 		String output =
 			"x\n"+
 			"i";
-		String xpath = "//function/block/statement/vardef/ID";
+		String xpath = "//function/block/vardef/ID";
 		checkXPathResults(code, xpath, output);
 	}
 
 	public void testRuleUnderWildcard() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/test.sample");
+		String code = loadFile(TEST_SAMPLE);
 		String output =
-			"var y = x\n"+
 			"x\n"+
 			"[\n"+
 			"1\n"+
@@ -109,13 +110,13 @@ public class TestXPath extends ParsingTestCase {
 			"=\n"+
 			"\"sdflkjsdf\"\n"+
 			"return\n"+
-			"false;";
+			"false";
 		String xpath = "//function/*/statement/*";
 		checkXPathResults(code, xpath, output);
 	}
 
 	public void testAllNonWhileTokens() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/bubblesort.sample");
+		String code = loadFile(BUBBLESORT_SAMPLE);
 		String output =
 			"(\n"+
 			")\n"+
@@ -125,7 +126,7 @@ public class TestXPath extends ParsingTestCase {
 	}
 
 	public void testGetNestedIf() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/bubblesort.sample");
+		String code = loadFile(BUBBLESORT_SAMPLE);
 		String output =
 			"if";
 		String xpath = "//'if'";
@@ -133,7 +134,7 @@ public class TestXPath extends ParsingTestCase {
 	}
 
 	public void testWildcardUnderFuncThenJustTokens() throws Exception {
-		String code = loadFile("test/org/antlr/jetbrains/adaptor/test/test.sample");
+		String code = loadFile(TEST_SAMPLE);
 		String output =
 			"func\n"+
 			"f\n"+
@@ -165,15 +166,11 @@ public class TestXPath extends ParsingTestCase {
 
 	// S U P P O R T
 
-	protected void checkXPathResults(String code, String xpath, String allNodesText) throws IOException {
-		checkXPathResults(SampleLanguage.INSTANCE, code, xpath, allNodesText);
-	}
-
-	protected void checkXPathResults(Language language, String code, String xpath, String allNodesText) throws IOException {
+	protected void checkXPathResults(String code, String xpath, String allNodesText) {
 		myFile = createPsiFile("a", code);
 		ensureParsed(myFile);
 		assertEquals(code, myFile.getText());
-		Collection<? extends PsiElement> nodes = XPath.findAll(language, myFile, xpath);
+		Collection<? extends PsiElement> nodes = XPath.findAll(SampleLanguage.INSTANCE, myFile, xpath);
 		StringBuilder buf = new StringBuilder();
 		for (PsiElement t : nodes) {
 			buf.append(t.getText());
