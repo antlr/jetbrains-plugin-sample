@@ -8,12 +8,13 @@
  *  Generate the parser via "mvn compile" from root dir of project.
  */
 grammar SampleLanguage;
+@header {package org.antlr.jetbrains.sample.parser;}
 
 /** The start rule must be whatever you would normally use, such as script
  *  or compilationUnit, etc...
  */
 script
-	:	vardef* function* statement* EOF
+	:	(vardef|function|statement)* EOF
 	;
 
 function
